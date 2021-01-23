@@ -60,23 +60,11 @@ namespace CDNSharp.Web.Controllers
 
         [HttpPost]
         [Route("Post")]
-        public async Task<IActionResult> PostAsync()
+        public async Task<IActionResult> PostAsync(IFormFile file, string version)
         {
-            //Arrange
-            var fileMock = new Mock<IFormFile>();
-            //Setup mock file using a memory stream
-            var content = "Hello World from a Fake File";
-            var fileName = "test.pdf";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            var file = fileMock.Object;
-            FormFile formFile = new FormFile(ms, 0, ms.Length, fileName, fileName);
-            var blah = await _cdnService.UploadAsync(formFile);
+            var fileInfo = await _cdnService.UploadAsync(file, version);
 
-            return NoContent();
+            return Created($"http://localhost:6115/Download/{fileInfo.Id}", fileInfo);
         }
     }
 }

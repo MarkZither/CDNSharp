@@ -9,7 +9,7 @@ namespace CDNSharp.Web.Services
 {
     public interface ICDNService : IDisposable
     {
-        Task<LiteFileInfo<string>> UploadAsync(IFormFile file);
+        Task<LiteFileInfo<string>> UploadAsync(IFormFile file, string version);
         Task<bool> AnyAsync(ObjectId id);
         Task<bool> AnyAsync(string fileName);
         Task DeleteAsync(string fileName);

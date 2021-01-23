@@ -42,6 +42,8 @@ namespace CDNSharp.Web.Services
 
         Task<LiteFileInfo<string>> ICDNService.DownloadAsync(string fileName)
         {
+            // Get a collection (or create, if doesn't exist)
+            var col = _liteDb.GetCollection("_files");
             Stream s = new MemoryStream();
             var fs = Task.Run(() => _liteDb.FileStorage.Download("$/photos/2014/picture-01.jpg", s));
             return fs;
@@ -62,10 +64,18 @@ namespace CDNSharp.Web.Services
             throw new NotImplementedException();
         }
 
-        Task<LiteFileInfo<string>> ICDNService.UploadAsync(IFormFile file)
+        Task<LiteFileInfo<string>> ICDNService.UploadAsync(IFormFile file, string version)
         {
+            // Get a collection (or create, if doesn't exist)
+            var col = _liteDb.GetCollection("_files");
+            var files = col.FindAll();
+            var bson = new BsonDocument();
+            bson["Name"] = "Mark Burton";
+            bson["CreateDate"] = DateTime.Now;
             // Upload a file from a Stream
-            var liteFileInfo = Task.Run(() => _liteDb.FileStorage.Upload("$/photos/2014/picture-01.jpg", file.FileName, file.OpenReadStream()));
+            var liteFileInfo = Task.Run(() => _liteDb.FileStorage.Upload($"$/{file.FileName}/{version}"
+                , file.FileName, file.OpenReadStream(), bson));
+
             return liteFileInfo;
         }
 
