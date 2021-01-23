@@ -10,11 +10,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MyCDN.Web.Configuration;
-using MyCDN.Web.DataAccess;
-using MyCDN.Web.Services;
+using CDNSharp.Web.Configuration;
+using CDNSharp.Web.DataAccess;
+using CDNSharp.Web.Services;
+using Microsoft.OpenApi.Models;
 
-namespace MyCDN.Web
+namespace CDNSharp.Web
 {
     public class Startup
     {
@@ -32,6 +33,11 @@ namespace MyCDN.Web
             services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));
             services.AddSingleton<ICDNService, CDNService>();
             services.AddSingleton<ILiteDbContext, LiteDbContext>();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CDBSharp Service", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +51,12 @@ namespace MyCDN.Web
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v1/swagger.json", "CDNSharp Service API V1");
+            });
 
             app.UseAuthorization();
 

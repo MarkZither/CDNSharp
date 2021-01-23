@@ -1,6 +1,6 @@
 using System;
 
-namespace MyCDN.Web
+namespace CDNSharp.Web
 {
     public class WeatherForecast
     {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using LiteDB;
 using Microsoft.Extensions.Options;
-using MyCDN.Web.Configuration;
+using CDNSharp.Web.Configuration;
 
-namespace MyCDN.Web.DataAccess
+namespace CDNSharp.Web.DataAccess
 {
     public class LiteDbContext : ILiteDbContext
     {

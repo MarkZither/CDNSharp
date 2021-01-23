@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using MyCDN.Web.DataAccess;
-using MyCDN.Web.Services;
+using CDNSharp.Web.DataAccess;
+using CDNSharp.Web.Services;
 
-namespace MyCDN.Web.Controllers
+namespace CDNSharp.Web.Controllers
 {
     [ApiController]
     [Route("")]
@@ -47,10 +47,18 @@ namespace MyCDN.Web.Controllers
 
             var file = await _cdnService.DownloadAsync(filename);
             
-            return File(file.OpenRead(), "text/css");
+            return File(file.OpenRead(), file.MimeType);
         }
 
         [HttpGet]
+        [Route("stream/{filename}")]
+        public async Task<FileStreamResult> Download(string filename)
+        {
+            var file = await _cdnService.DownloadAsync(filename);
+            return new FileStreamResult(file.OpenRead(), file.MimeType);
+        }
+
+        [HttpPost]
         [Route("Post")]
         public async Task<IActionResult> PostAsync()
         {

@@ -1,14 +1,14 @@
 ﻿using LiteDB;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MyCDN.Web.DataAccess;
+using CDNSharp.Web.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyCDN.Web.Services
+namespace CDNSharp.Web.Services
 {
     public class CDNService : ICDNService
     {

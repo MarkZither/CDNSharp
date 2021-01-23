@@ -5,12 +5,13 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CB7A9F56-D265-4CB4-B31A-3B0ABE83B7CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCDN.Web", "src\MyCDN.Web\MyCDN.Web.csproj", "{EC6D3087-0541-487C-A062-C1B76B69ADB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CDNSharp.Web", "src\CDNSharp.Web\CDNSharp.Web.csproj", "{EC6D3087-0541-487C-A062-C1B76B69ADB4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{57AAA94D-3B35-4724-9387-93A215596945}"
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
 		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection

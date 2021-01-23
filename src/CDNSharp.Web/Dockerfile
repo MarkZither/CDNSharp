@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["src/MyCDN.Web/MyCDN.Web.csproj", "src/MyCDN.Web/"]
-RUN dotnet restore "src/MyCDN.Web/MyCDN.Web.csproj"
+COPY ["src/CDNSharp.Web/CDNSharp.Web.csproj", "src/CDNSharp.Web/"]
+RUN dotnet restore "src/CDNSharp.Web/CDNSharp.Web.csproj"
 COPY . .
-WORKDIR "/src/src/MyCDN.Web"
-RUN dotnet build "MyCDN.Web.csproj" -c Release -o /app/build
+WORKDIR "/src/src/CDNSharp.Web"
+RUN dotnet build "CDNSharp.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MyCDN.Web.csproj" -c Release -o /app/publish
+RUN dotnet publish "CDNSharp.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MyCDN.Web.dll"]
+ENTRYPOINT ["dotnet", "CDNSharp.Web.dll"]

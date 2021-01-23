@@ -1,6 +1,6 @@
 ﻿using LiteDB;
 
-namespace MyCDN.Web.DataAccess
+namespace CDNSharp.Web.DataAccess
 {
     public interface ILiteDbContext
     {

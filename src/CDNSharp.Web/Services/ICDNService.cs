@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyCDN.Web.Services
+namespace CDNSharp.Web.Services
 {
     public interface ICDNService : IDisposable
     {
