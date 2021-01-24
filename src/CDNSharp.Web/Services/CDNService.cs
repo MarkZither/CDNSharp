@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CDNSharp.Web.Models;
 
 namespace CDNSharp.Web.Services
 {
@@ -40,13 +41,13 @@ namespace CDNSharp.Web.Services
             throw new NotImplementedException();
         }
 
-        Task<LiteFileInfo<string>> ICDNService.DownloadAsync(string fileName)
+        Task<LiteFileInfo<string>> ICDNService.DownloadAsync(string id)
         {
             // Get a collection (or create, if doesn't exist)
-            var col = _liteDb.GetCollection("_files");
+            var col = _liteDb.FileStorage.FindAll().ToList();
             Stream s = new MemoryStream();
-            var fs = Task.Run(() => _liteDb.FileStorage.Download("$/photos/2014/picture-01.jpg", s));
-            return fs;
+            var liteFileInfo = _liteDb.FileStorage.Download(id, s);
+            return Task.FromResult(liteFileInfo);
         }
 
         Task<LiteFileInfo<string>> ICDNService.DownloadAsync(ObjectId id)
@@ -54,29 +55,30 @@ namespace CDNSharp.Web.Services
             throw new NotImplementedException();
         }
 
-        object ICDNService.GetAllFiles(int skip, int take)
+        IEnumerable<CDNFileInfo<string>> ICDNService.GetAllFiles(int skip, int take)
+        {
+            var files = _liteDb.FileStorage.FindAll();
+            var simpleFiles = from file in files
+                              select new CDNFileInfo<string> { Filename = file.Filename, Id = file.Id, MimeType = file.MimeType };
+            
+            return simpleFiles;
+        }
+
+        IEnumerable<CDNFileInfo<string>> ICDNService.GetAllFilesByContentType(string contentType, int skip, int take)
         {
             throw new NotImplementedException();
         }
 
-        object ICDNService.GetAllFilesByContentType(string contentType, int skip, int take)
+        Task<CDNFileInfo<string>> ICDNService.UploadAsync(IFormFile file, string fileName, string version)
         {
-            throw new NotImplementedException();
-        }
-
-        Task<LiteFileInfo<string>> ICDNService.UploadAsync(IFormFile file, string version)
-        {
-            // Get a collection (or create, if doesn't exist)
-            var col = _liteDb.GetCollection("_files");
-            var files = col.FindAll();
             var bson = new BsonDocument();
             bson["Name"] = "Mark Burton";
             bson["CreateDate"] = DateTime.Now;
             // Upload a file from a Stream
-            var liteFileInfo = Task.Run(() => _liteDb.FileStorage.Upload($"$/{file.FileName}/{version}"
-                , file.FileName, file.OpenReadStream(), bson));
-
-            return liteFileInfo;
+            var liteFileInfo = _liteDb.FileStorage.Upload($"{fileName}@{version}"
+                , file.FileName, file.OpenReadStream(), bson);
+            var cdnFileInfo = new CDNFileInfo<string> { Filename = liteFileInfo.Filename, Id = liteFileInfo.Id, MimeType = liteFileInfo.MimeType };
+            return Task.FromResult(cdnFileInfo);
         }
 
         #region IDisposable Support

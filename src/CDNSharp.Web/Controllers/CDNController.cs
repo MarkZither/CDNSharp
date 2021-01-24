@@ -14,7 +14,7 @@ using CDNSharp.Web.Services;
 namespace CDNSharp.Web.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("api")]
     public class CDNController : ControllerBase
     {
         private readonly ILogger<CDNController> _logger;
@@ -26,26 +26,22 @@ namespace CDNSharp.Web.Controllers
             _cdnService = cdnService;
         }
 
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Content("Something to go here soon");
+            var files = _cdnService.GetAllFiles(0, 100);
+            return Ok(files);
         }
         [HttpGet]
-        [Route("/{filename}")]
-        public async Task<IActionResult> GetByName([FromRouteAttribute]string filename)
+        [Route("/{id}")]
+        public async Task<IActionResult> GetByName([FromRouteAttribute]string id)
         {
-            if(string.IsNullOrEmpty(filename))
+            if(string.IsNullOrEmpty(id))
             {
                 return NoContent();
             }
 
-            var file = await _cdnService.DownloadAsync(filename);
+            var file = await _cdnService.DownloadAsync(id);
             
             return File(file.OpenRead(), file.MimeType);
         }
@@ -59,12 +55,12 @@ namespace CDNSharp.Web.Controllers
         }
 
         [HttpPost]
-        [Route("Post")]
-        public async Task<IActionResult> PostAsync(IFormFile file, string version)
+        [Route("{fileName}/{version}")]
+        public async Task<IActionResult> PostAsync(IFormFile file, string fileName, string version)
         {
-            var fileInfo = await _cdnService.UploadAsync(file, version);
+            var fileInfo = await _cdnService.UploadAsync(file, fileName, version);
 
-            return Created($"http://localhost:6115/Download/{fileInfo.Id}", fileInfo);
+            return Created($"{Request.Scheme}://{Request.Host}{Request.PathBase}/Download/{fileInfo.Id}", fileInfo.Id);
         }
     }
 }
