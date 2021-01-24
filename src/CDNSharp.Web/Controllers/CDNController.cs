@@ -29,11 +29,11 @@ namespace CDNSharp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var files = _cdnService.GetAllFiles(0, 100);
+            var files = await Task.Run(() => _cdnService.GetAllFiles(0, 100)).ConfigureAwait(true);
             return Ok(files);
         }
         [HttpGet]
-        [Route("/{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> GetByName([FromRouteAttribute]string id)
         {
             if(string.IsNullOrEmpty(id))
