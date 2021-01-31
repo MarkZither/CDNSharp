@@ -10,11 +10,13 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using CDNSharp.Web.DataAccess;
 using CDNSharp.Web.Services;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Net;
 
 namespace CDNSharp.Web.Controllers
 {
     [ApiController]
-    [Route("api")]
+    [Route("api/[controller]")]
     public class CDNController : ControllerBase
     {
         private readonly ILogger<CDNController> _logger;
@@ -27,6 +29,10 @@ namespace CDNSharp.Web.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation("GetPackages")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+
         public async Task<IActionResult> Get()
         {
             var files = await Task.Run(() => _cdnService.GetAllFiles(0, 100)).ConfigureAwait(true);
@@ -34,6 +40,9 @@ namespace CDNSharp.Web.Controllers
         }
         [HttpGet]
         [Route("{id}")]
+        [SwaggerOperation("GetPackagesByName")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetByName([FromRouteAttribute]string id)
         {
             if(string.IsNullOrEmpty(id))
@@ -48,6 +57,9 @@ namespace CDNSharp.Web.Controllers
 
         [HttpGet]
         [Route("stream/{filename}")]
+        [SwaggerOperation("DownloadPackage")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
         public async Task<FileStreamResult> Download(string filename)
         {
             var file = await _cdnService.DownloadAsync(filename);
@@ -56,6 +68,9 @@ namespace CDNSharp.Web.Controllers
 
         [HttpPost]
         [Route("{fileName}/{version}")]
+        [SwaggerOperation("UploadPackage")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> PostAsync(IFormFile file, string fileName, string version)
         {
             var fileInfo = await _cdnService.UploadAsync(file, fileName, version);
