@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace CDNSharp.Web.Models
 {
-    public class CDNFileInfoString
+    public class CDNFile
+
     {
         public string Id { get; set; }
         public string Filename { get; set; }

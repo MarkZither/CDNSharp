@@ -9,7 +9,7 @@ namespace CDNSharp.Web.Models
         {
         }
 
-        public DbSet<CDNFileInfoString> CDNFileInfoStrings { get; set; }
+        public DbSet<CDNFile> CDNFileInfoStrings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

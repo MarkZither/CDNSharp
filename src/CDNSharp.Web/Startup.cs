@@ -26,6 +26,8 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.OData.Formatter;
 using CDNSharp.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.IO;
 
 namespace CDNSharp.Web
 {
@@ -73,10 +75,33 @@ namespace CDNSharp.Web
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CDNSharp Service", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "CDNSharp Service", Version = "v1",
+                    Description = "A simple example ASP.NET Core Web API",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Mark Burton",
+                        Email = string.Empty,
+                        Url = new Uri("https://twitter.com/mark__burton"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Use under LICX",
+                        Url = new Uri("https://example.com/license"),
+                    }
+                });
                 //https://github.com/OData/AspNetCoreOData/issues/41
                 c.DocInclusionPredicate((name, api) => api.HttpMethod != null);
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
+
+
+            
 
             //GraphQL            
             services.AddSingleton<FileSchema>()
@@ -93,7 +118,7 @@ namespace CDNSharp.Web
         private IEdmModel GetEdmModel()
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-            builder.EntitySet<CDNFileInfoString>("CDNFileInfoString").EntityType.HasKey(c => c.Id);
+            builder.EntitySet<CDNFile>("CDNFile").EntityType.HasKey(c => c.Id);
             return builder.GetEdmModel();
         }
 
