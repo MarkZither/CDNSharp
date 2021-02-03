@@ -1,4 +1,5 @@
-﻿using CDNSharp.Web.Models;
+﻿using CDNSharp.Web.DataAccess;
+using CDNSharp.Web.Models;
 using CDNSharp.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,15 @@ namespace CDNSharp.Web.Controllers
     {
         private readonly ILogger<CDNFileController> _logger;
         private readonly ICDNService _cdnService;
+        //private readonly MyDataContext _myDataContext;
 
-        public CDNFileController(ILogger<CDNFileController> logger, ICDNService cdnService)
+        public CDNFileController(ILogger<CDNFileController> logger, ICDNService cdnService
+            //, MyDataContext myDataContext
+            )
         {
             _logger = logger;
             _cdnService = cdnService;
+            //_myDataContext = myDataContext;
         }
 
         /// <summary>
@@ -46,6 +51,7 @@ namespace CDNSharp.Web.Controllers
         {
             try
             {
+                //var cdnFiles = _myDataContext.Files;
                 var CDNFileInfos = _cdnService.GetAllFiles(0, 100000);
                 var CDNFileInfoStrings = from file in CDNFileInfos
                                          select (new CDNFile() { Filename = file.Filename, Id = file.Id, MimeType = file.MimeType });

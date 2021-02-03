@@ -28,6 +28,7 @@ using CDNSharp.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.IO;
+using MaikeBing.EntityFrameworkCore;
 
 namespace CDNSharp.Web
 {
@@ -43,7 +44,11 @@ namespace CDNSharp.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MyDataContext>(opt => opt.UseLazyLoadingProxies().UseInMemoryDatabase("MyDataContextList"));
+            var liteDBOptions = Configuration.GetSection("LiteDbOptions");
+            //services.AddDbContext<MyDataContext>(opt => opt.UseLazyLoadingProxies().UseInMemoryDatabase("MyDataContextList"));
+            //services.AddDbContext<MyDataContext>(options =>
+            //    options.UseLiteDB(
+            //        liteDBOptions.GetValue<string>("DatabaseLocation")));
 
             //services.AddOData(opt => opt.AddModel("odata", GetEdmModel()));
             services.AddOData(opt => opt.Count().Filter().Expand().Select().OrderBy().SetMaxTop(5)
@@ -69,7 +74,7 @@ namespace CDNSharp.Web
 
 
 
-            services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));
+            services.Configure<LiteDbOptions>(liteDBOptions);
             services.AddSingleton<ICDNService, CDNService>();
             services.AddSingleton<ILiteDbContext, LiteDbContext>();
 
@@ -99,9 +104,6 @@ namespace CDNSharp.Web
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-
-
-            
 
             //GraphQL            
             services.AddSingleton<FileSchema>()
